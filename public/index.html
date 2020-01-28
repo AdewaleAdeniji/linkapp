@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="logo.png">
+    <link rel="stylesheet" type="text/css" href="vendor/vendor/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="f2/css/all.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>vuapps</title>
+  </head>
+  <body>
+    <noscript>
+    <strong>We're sorry but vuapps doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+
+
+    <div id="header">
+        
+    </div>
+    
+    <div id="appbody">
+      
+    </div>
+    <!-- built files will be auto injected -->
+    <!-- <script type="text/javascript" src="vendor/vendor/js/bootstrap.js"></script>
+    <script type="text/javascript" src="vendor/vendor/js/jquery.js"></script>
+    <script type="text/javascript" src="vendor/vendor/js/owl-carousel.js"></script>
+    <script type="text/javascript" src="vendor/vendor/js/popper.js"></script> -->
+    <script type="text/javascript" src="vendor/vendor/js/sw2.js"></script>
+   <script type="text/javascript">
+       function more(e){
+        var a = (localStorage.getItem("links")).split("|");
+        var el = a[e];
+       var item = JSON.parse(el);
+       var title = item.linktitle;
+       var about = item.linkabout;
+       var date = item.date;
+       var link = item.link;
+
+       var ht = '<section class="container"><div class="row"><div class="card col-md-12 text-white" style="background:#111429;"><img src="img/logo.png" class="card-img-top" alt="..."><div class="card-body"><h5 class="card-title">'+title+'</h5><p class="card-text">'+about+'</p></div><div class="card-footer light-bg"><small class="text-muted light-bg smcl"><a class="linka" href="'+link+'" target="_blank">'+link+'</a><i class="fa fa-copy text-white" data-toggle="tooltip" data-placement="right" title="Copy link"></i></small></div><div class="card-footer light-bg"><small class="text-muted light-bg">'+date+'</small></div></div></div></section>';
+       swal.fire({
+        html:ht,
+        showCancelButton:true,
+        confirmButtonText:'Edit <i class"fa fa-pen"></i>',
+        cancelButtonText:"Delete <i class='fa fa-trash'></i>",
+        cancelButtonColor:'red',
+        confirmButtonColor:"fff",
+        background:'#111429',
+        showCloseButton:true,
+        reverseButtons:true,
+
+       }).then((result)=>{
+         if (result.value) {
+                editlink(e);   
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+              ) {
+                deletelink(e);
+              }
+       })
+       .catch((err)=>{
+        console.log(err);
+       })
+
+
+
+       }
+       function editlink(e){
+       
+         var a = (localStorage.getItem("links")).split("|");
+        var el = a[e];
+       var item = JSON.parse(el);
+       var title = item.linktitle;
+       var about = item.linkabout;
+       var date = item.date;
+       var link = item.link;
+       var index = e;
+       var newlink,newtitle,newabt,newdate;
+
+       swal.fire({
+        icon:'question',
+        // title:'Edit '+title+' Saved Link',
+        text:'Edit Link or Website Address',
+        input:'text',
+        inputValue:link,
+        inputAttributes:{
+            required:true,
+            minLength:5,
+            value:link,
+            inputValue:link,
+        },
+        validationMessage:'Invalid URL or Link',
+        showCancelButton:true,
+            showCloseButton:true,
+            allowOutsideClick:true,
+            allowEnterKey:true,
+            allowEscapeKey:true,
+            backdrop:'#111423',
+            confirmButtonColor:"#111429",
+       })
+       .then((result)=>{
+        if(result.value){
+            var d = result.value;
+            var dot = link.indexOf(".");
+                
+                if(dot<0){
+                let erro = "Invalid Website Link";
+                swal.fire({
+                icon:'error',
+                text:erro,
+                confirmButtonColor:"#111429",
+                }).then((r)=>{
+                    editlink(e);
+                })
+                }
+                else {
+                    newlink = d;
+                    swal.fire({
+                        icon:'question',
+                         // title:'Edit '+title+' Saved Link',
+                        text:'Edit Link Title',
+                        input:'text',
+                        inputValue:title,
+                        inputAttributes:{
+                            required:true,
+                            minLength:4,
+                            value:title,
+                            inputValue:title,
+                        },
+                    validationMessage:'Invalid Link title,HINT:Link title should be more than three characters',
+                            showCancelButton:true,
+                            showCloseButton:false,
+                            allowOutsideClick:false,
+                            allowEnterKey:true,
+                            allowEscapeKey:false,
+                            backdrop:'#111423',
+                            confirmButtonColor:"#111429",
+                            confirmButtonText:"Continue",
+                            cancelButtonText:'No,Just save it..<i class="fa fa-save"></i>',
+                            showCancelButton:true,
+                        })
+                    .then((res)=>{
+                        if(res.value){
+                            newtitle = res.value;
+                            editabt(index,newlink,newtitle,about);
+                        }
+                        else {
+                            //PROCEED TO ABOUT EDIT
+                            newtitle =newlink;
+                            editabt(index,newlink,newtitle,about);
+                        }
+                    })
+
+                }
+        }
+        else {
+           
+        }
+
+       })
+       }
+       function editabt(index,link,title,about){
+        var newabout;
+        swal.fire({
+                icon:'question',
+                html:'Would you love to leave a brief description of this link e.g Application deadline or debate topic etc <i class="fa fa-heart"></i>',
+                confirmButtonText:"Yes,I'd love that",
+            cancelButtonText:"No,Maybe Later",
+            showCancelButton:true,
+            showCloseButton:false,
+            allowOutsideClick:false,
+            allowEnterKey:true,
+            allowEscapeKey:false,
+            backdrop:'#111423',
+            confirmButtonColor:"#111429",
+                })
+                .then((decision)=>{
+                if(decision.value){
+                swal.fire({
+                icon:'question',
+            text:'Enter a short description',
+            input:'textarea',
+            inputValue:about,
+            inputAttributes:{
+            required:true,
+            value:about,
+            inputValue:about,
+            minlength:6,
+            maxLength:15,
+            placeholder:'Short description about the link',
+            },
+            confirmButtonText:'Save <i class="fa fa-save"></i>',
+            cancelButtonText:"No ",
+            showCancelButton:false,
+            showCloseButton:false,
+            allowOutsideClick:false,
+            allowEnterKey:true,
+            allowEscapeKey:false,
+            backdrop:'#111415',
+            confirmButtonColor:"#111429",
+            validationMessage:"About text should not be empty,less than 6 characters or more than 15 characters <i class='fa fa-smile-beam'></i>",
+                })
+                .then((abt)=>{
+                    newabout = abt.value || '';
+                    console.log(newabout,title,link,index);
+                    savelink(link,title,newabout,index)
+                });
+            }
+            else {
+                newabout = about;
+                savelink(link,title,newabout,index)
+            console.log(newabout,title,link,index);     
+            }
+        });
+                
+       }
+    function chooseyes(){
+    var password = localStorage.getItem("password");
+      var pwd;
+     if(password==""||password==undefined||password==null){
+        swal.fire({
+            icon:'question',
+            text:'Choose a password',
+            input:'password',
+            inputAttributes:{
+                required:true,
+                minLength:5,
+                placeholder:'Choose a password',
+            },
+            validationMessage:"Password must not be empty and must be more than 5 characters",
+            allowEnterKey:true,
+            confirmButtonColor:"#111429",
+            backdrop:'#111429',
+          })
+        .then((result)=>{
+            if(result.value){
+                var p = btoa(result.value);
+                localStorage.setItem('password',p);
+                setupass();
+            }
+        })
+        .catch((err)=>{
+            console.log(err);
+        });
+     }
+     else {
+        var p = atob(password);
+        setupass();
+     }
+
+       }
+       function setupass(){
+        swal.fire({
+            icon:'success',
+            html:'Passwords will  always be required to startup linkapp<br>Did you really want to lock linkapp?',
+            confirmButtonColor:'#111429',
+            confirmButtonText:'Yes,Lock LinkApp',
+              showCancelButton:true,
+              cancelButtonText:"No,I'll do that tommorow",
+                            showCloseButton:false,
+                            allowOutsideClick:false,
+                            allowEnterKey:true,
+                            allowEscapeKey:false,
+                            backdrop:'#111423',
+        })
+        .then((dec)=>{
+            if(dec.value){
+                localStorage.setItem("locked",true);
+                swal.fire({
+                    icon:'success',
+                    text:'Account Locked Successfully',
+                    timer:2000,
+                    showConfirmButton:false,
+                });
+
+            }
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+       }
+       function nextitem(){
+        swal.fire({
+            icon:'success',
+            html:'Turn On synchronisation to the internet',
+            footer:'When you turn on synchronisation you can access your links on all your devices..',
+        })
+       }
+       function savelink(link,title,about,index){
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() +1;
+        var minutes = date.getMinutes();
+        var day = date.getDay();
+        var hour = date.getHours();
+        var time = hour+':'+minutes+'  '+day+'/'+month+'/'+year;
+        var obj = JSON.stringify({link:link,linktitle:title,linkabout:about,date:time});
+        var a = (localStorage.getItem("links")).split("|");
+        a[index] = obj;
+        let g = a.join("|");
+        localStorage.setItem("links",g);
+        swal.fire({
+            icon:'success',
+            text:'Edited '+title+' succesfully',
+            confirmButtonColor:'#111429',
+            confirmButtonText:'Okay <i class="fa fa-smile-beam"></i>',
+            timer:2000,
+        });
+        rerender();
+        }
+       function deletelink(e){
+        try{
+         var a = (localStorage.getItem("links")).split("|");
+            delete a[e];
+
+            var h = a.filter(function () { return true });
+
+        //console.log(cleanArray); 
+            let g = h.join("|");
+        localStorage.setItem("links",g);
+        swal.fire({
+            icon:'success',
+            text:'Deleted succesfully',
+            confirmButtonColor:'#111429',
+            confirmButtonText:'Okay <i class="fa fa-smile-beam"></i>',
+            timer:2000,
+        })
+        rerender();
+        }
+        catch(err){
+            console.log(err);
+        }
+       }
+    function rerender(){
+        document.getElementById("rowcards").innerHTML="";
+    var links = localStorage.getItem("links");
+    var n = links.split("|");
+    
+    
+    var arr = n;
+    arr.forEach((it,index)=>{
+    if(it.trim()==""){
+    //empty strings 
+    }
+    else {
+    var item = JSON.parse(it);
+    
+    var title = item.linktitle;
+       var about = item.linkabout;
+       var date = item.date;
+       var link = item.link;
+
+       var ht = '<div class="card col-md-12 text-white" style="background:#111429;max-width: 18rem;" onclick="more('+index+')"><img src="img/logo.png" class="card-img-top" alt="..."><div class="card-body"><h5 class="card-title">'+title+'</h5><p class="card-text">'+about+'</p></div><div class="card-footer light-bg"><small class="text-muted light-bg smcl"><a class="linka" href="'+link+'" target="_blank">'+link+'</a><i class="fa fa-copy text-white" data-toggle="tooltip" data-placement="right" title="Copy link"></i></small></div><div class="card-footer"><small class="text-muted ">'+date+'</small></div></div>';
+    var e = document.getElementById("rowcards").innerHTML;
+    var v = e+ht;
+    document.getElementById("rowcards").innerHTML=v;
+    }
+    });
+       }
+   </script>
+  </body>
+</html>
+ 

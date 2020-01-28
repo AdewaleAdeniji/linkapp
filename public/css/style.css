@@ -1,0 +1,12 @@
+ @font-face {
+      font-family: 'Lato';
+     
+      src:url('../f2/fonts/lato/Lato-Regular.ttf') format('truetype'),url('../f2/fonts/lato/Lato-Thin.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+  @media(max-width: 450px){
+  	.fordesktop{
+  		display: none !important;
+  	}
+  }
